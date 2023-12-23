@@ -1,13 +1,18 @@
-import RestaurentCard from './RestaurantCard';
+import RestaurantCard from './RestaurantCard';
 import resList from '../utils/mockData';
 import { useState, useEffect } from 'react';
 import Shimmer from './Shimmer';
 import { findDOMNode } from 'react-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { Link } from 'react-router-dom';
 
 const Body = () => {
   const [listRestaurents, setListRestaurents] = useState([]);
   const [newListRestaurents, setNewListRestaurents] = useState([]);
   const [searchText, setSearchText] = useState('');
+
+  const [ind, setInd] = useState(6);
+  const [hasMore, setHasMore] = useState(true);
 
   // Whenever state variables changes, React triggers the Reconciliation cycle (Rerender the component).
   console.log('Rendered Value =>');
@@ -24,12 +29,17 @@ const Body = () => {
     const json = await data.json();
 
     console.log(json);
+
     setListRestaurents(
       json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
     setNewListRestaurents(
-      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants.slice(
+        0,
+        6
+      )
     );
+    console.log(listRestaurents);
   };
 
   const filterRes = (searchText, listRestaurents) => {
@@ -42,8 +52,71 @@ const Body = () => {
   // if (listRestaurents.length == 0) {
   //   return <Shimmer />;
   // }
+  const loadNextData = () => {
+    if (listRestaurents.length <= newListRestaurents.length) {
+      setHasMore(false);
+      return;
+    }
+    console.log('moredata');
 
-  return listRestaurents.length === 0 ? (
+    setTimeout(async () => {
+      if (newListRestaurents.length > 0) {
+        setNewListRestaurents(
+          newListRestaurents.concat(listRestaurents.slice(ind, ind + 4))
+        );
+        console.log(ind + 'index');
+        setInd(ind + 4);
+        //     console.log("ckc");
+        var response = await fetch(
+          `https://kind-puce-bull-tie.cyclic.app/api/proxy/swiggy/dapi/restaurants/list/update`,
+          {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+              'Content-Type': 'application/json',
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify({
+              lat: 18.5879534,
+              lng: 73.7372559,
+              nextOffset: 'COVCELQ4KICw+8yri/flGzCnEzgE',
+              widgetOffset: {
+                NewListingView_Topical_Fullbleed: '',
+                NewListingView_category_bar_chicletranking_TwoRows: '',
+                NewListingView_category_bar_chicletranking_TwoRows_Rendition:
+                  '',
+                Restaurant_Group_WebView_SEO_PB_Theme: '',
+                collectionV5RestaurantListWidget_SimRestoRelevance_food_seo:
+                  '10',
+                inlineFacetFilter: '',
+                restaurantCountWidget: '',
+              },
+              filters: {},
+              seoParams: {
+                seoUrl: 'https://www.swiggy.com/',
+                pageType: 'FOOD_HOMEPAGE',
+                apiName: 'FoodHomePage',
+              },
+              page_type: 'DESKTOP_WEB_LISTING',
+              _csrf: 'zppamymkwhYy-st2dmm28xdfMkUVU1lgvrd2qVxk',
+            }), // body data type must match "Content-Type" header
+          }
+        );
+        response = await response.json();
+
+        console.log('moredata', response);
+      }
+    }, 1000);
+  };
+
+  console.log(listRestaurents);
+  console.log('anmskfdsf');
+
+  return listRestaurents.length == 0 ? (
     <Shimmer />
   ) : (
     <div className="body">
@@ -83,11 +156,31 @@ const Body = () => {
         </div>
       </div>
 
-      <div className="res-container">
-        {newListRestaurents.map((restaurant) => (
-          <RestaurentCard key={restaurant.info.id} resData={restaurant} />
-        ))}
-      </div>
+      <InfiniteScroll
+        dataLength={newListRestaurents.length} //This is important field to render the next data
+        next={loadNextData}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        endMessage={
+          <p style={{ textAlign: 'center' }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+        // below props only if you need pull down functionality
+      >
+        {
+          <div className="res-container">
+            {newListRestaurents.map((restaurant) => (
+              <Link
+                key={restaurant.info.id}
+                to={'/restaurants/' + restaurant.info.id}
+              >
+                <RestaurantCard resData={restaurant} />
+              </Link>
+            ))}
+          </div>
+        }
+      </InfiniteScroll>
     </div>
   );
 };

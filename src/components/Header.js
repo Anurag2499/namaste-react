@@ -1,16 +1,14 @@
+import { Link } from 'react-router-dom';
 import { LOGO_URL } from '../utils/constants';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Header = () => {
   const [loginVar, setLoginVar] = useState('Login');
+  useEffect(() => {
+    console.log('useEffect Called from header!!');
+  }, [loginVar]);
 
-  // const ChangeLoginVar = () => {
-  //   if (loginVar == 'Login') {
-  //     setLoginVar('Logout');
-  //   } else {
-  //     setLoginVar('Login');
-  //   }
-  // };
+  console.log('header render');
 
   return (
     <div className="header">
@@ -19,10 +17,18 @@ const Header = () => {
       </div>
       <div className="nav-items">
         <ul>
-          <li>Home</li>
-          <li>About Us</li>
-          <li>Contact Us</li>
-          <li>Cart</li>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About Us</Link>
+          </li>
+          <li>
+            <Link to="/contact">Contact Us</Link>
+          </li>
+          <li>
+            <Link to="/cart">Cart</Link>
+          </li>
           <button
             className="login"
             onClick={() => {
