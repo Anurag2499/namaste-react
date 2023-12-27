@@ -5,6 +5,7 @@ import Shimmer from './Shimmer';
 import { findDOMNode } from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'react-router-dom';
+import useOnlineStatus from '../utils/useOnlineStatus';
 
 const Body = () => {
   const [listRestaurents, setListRestaurents] = useState([]);
@@ -27,14 +28,14 @@ const Body = () => {
       'https://www.swiggy.com/dapi/restaurants/list/v5?lat=18.5879534&lng=73.7372559&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING'
     );
     const json = await data.json();
-
+    console.log('json data -');
     console.log(json);
 
     setListRestaurents(
-      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
     setNewListRestaurents(
-      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants.slice(
+      json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants.slice(
         0,
         6
       )
@@ -116,6 +117,15 @@ const Body = () => {
   console.log(listRestaurents);
   console.log('anmskfdsf');
 
+  const isOnline = useOnlineStatus();
+  if (isOnline === false) {
+    return (
+      <h1 className="isOnline">
+        Please check your internet connection , you are offline.
+      </h1>
+    );
+  }
+
   return listRestaurents.length == 0 ? (
     <Shimmer />
   ) : (
@@ -134,7 +144,6 @@ const Body = () => {
           className="search-bar-btn"
           onClick={() => {
             const data = filterRes(searchText, listRestaurents);
-            // setListRestaurents(data);
             setNewListRestaurents(data);
           }}
         >
