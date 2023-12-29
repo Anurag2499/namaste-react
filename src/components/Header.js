@@ -14,30 +14,30 @@ const Header = () => {
   const isOnline = useOnlineStatus();
 
   return (
-    <div className="header">
-      <div className="logo-container">
+    <div className="flex justify-between shadow-lg p-3 m-2 rounded-lg border bg-[#f0f0f0]">
+      <div className="w-40">
         <img className="logo" src={LOGO_URL} alt="logo" />
       </div>
-      <div className="nav-items">
-        <ul>
-          <li>Online Status: {isOnline ? '✅' : '🔴'}</li>
-          <li>
+      <div className="flex items-center">
+        <ul className="flex text-xl p-4 m-4  ">
+          <li className="px-4">Online Status: {isOnline ? '✅' : '🔴'}</li>
+          <li className="px-4 dark:md:hover:bg-gray-200  rounded-3xl pb-1">
             <Link to="/">Home</Link>
           </li>
-          <li>
+          <li className="px-4 dark:md:hover:bg-gray-200  rounded-3xl pb-1">
             <Link to="/about">About Us</Link>
           </li>
-          <li>
+          <li className="px-4 dark:md:hover:bg-gray-200  rounded-3xl pb-1">
             <Link to="/contact">Contact Us</Link>
           </li>
-          <li>
+          <li className="px-4 dark:md:hover:bg-gray-200  rounded-3xl pb-1">
             <Link to="/cart">Cart</Link>
           </li>
-          <li>
+          <li className="px-4 dark:md:hover:bg-gray-200  rounded-3xl pb-1">
             <Link to="/grocery">Grocery</Link>
           </li>
           <button
-            className="login"
+            className="login px-4 dark:md:hover:bg-gray-200  rounded-3xl pb-1"
             onClick={() => {
               loginVar == 'Login'
                 ? setLoginVar('Logout')

@@ -69,7 +69,7 @@ const Body = () => {
         setInd(ind + 4);
         //     console.log("ckc");
         var response = await fetch(
-          `https://kind-puce-bull-tie.cyclic.app/api/proxy/swiggy/dapi/restaurants/list/update`,
+          // `https://kind-puce-bull-tie.cyclic.app/api/proxy/swiggy/dapi/restaurants/list/update`,
           {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, *cors, same-origin
@@ -130,18 +130,18 @@ const Body = () => {
     <Shimmer />
   ) : (
     <div className="body">
-      <div className="search-bar">
+      <div className="search-bar p-3 m-3 ">
         <input
           type="text"
-          className="search-bar-input"
-          placeholder="Search Restaurent"
+          className="search-bar-input border border-solid border-black mx-2 px-2 py-1 rounded-lg"
+          placeholder="Search Restaurant"
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);
           }}
         />
         <button
-          className="search-bar-btn"
+          className="bg-orange-100 border border-solid border-orange-200 shadow-md hover:bg-orange-200 mx-2 px-4 py-1 rounded-lg"
           onClick={() => {
             const data = filterRes(searchText, listRestaurents);
             setNewListRestaurents(data);
@@ -151,7 +151,7 @@ const Body = () => {
         </button>
         <div className="filter">
           <button
-            className="filter-btn"
+            className="bg-orange-100 border border-solid border-orange-200 shadow-md hover:bg-orange-200 mx-2 my-5 px-4 py-1 rounded-lg"
             onClick={() => {
               let filterList = listRestaurents.filter(
                 (res) => res.info.avgRating > 4
@@ -178,7 +178,7 @@ const Body = () => {
         // below props only if you need pull down functionality
       >
         {
-          <div className="res-container">
+          <div className="res-container   flex flex-wrap  mx-4 my-2">
             {newListRestaurents.map((restaurant) => (
               <Link
                 key={restaurant.info.id}
