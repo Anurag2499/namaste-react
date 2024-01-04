@@ -1,11 +1,13 @@
-import RestaurantCard from './RestaurantCard';
+import RestaurantCard, { withPromotedLabel } from './RestaurantCard';
 import resList from '../utils/mockData';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Shimmer from './Shimmer';
 import { findDOMNode } from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'react-router-dom';
 import useOnlineStatus from '../utils/useOnlineStatus';
+import RestaurentCard from './RestaurantCard';
+import { UserContext } from '../utils/UserContext.js';
 
 const Body = () => {
   const [listRestaurents, setListRestaurents] = useState([]);
@@ -15,9 +17,15 @@ const Body = () => {
   const [ind, setInd] = useState(6);
   const [hasMore, setHasMore] = useState(true);
 
+  // here iam fetching the setUserName function which is initialized in the .provider in the APP.js
+  const { loggedInUser, setUserName } = useContext(UserContext);
+
   // Whenever state variables changes, React triggers the Reconciliation cycle (Rerender the component).
   console.log('Rendered Value =>');
   console.log({ searchText });
+
+  // this is the higher order component which is taking the component as input
+  const RestaurentCardPromoted = withPromotedLabel(RestaurentCard);
 
   useEffect(() => {
     fetchData();
@@ -40,6 +48,8 @@ const Body = () => {
         6
       )
     );
+    console.log('json data list of restuarents -');
+
     console.log(listRestaurents);
   };
 
@@ -131,24 +141,42 @@ const Body = () => {
   ) : (
     <div className="body">
       <div className="search-bar p-3 m-3 ">
-        <input
-          type="text"
-          className="search-bar-input border border-solid border-black mx-2 px-2 py-1 rounded-lg"
-          placeholder="Search Restaurant"
-          value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-        />
-        <button
-          className="bg-orange-100 border border-solid border-orange-200 shadow-md hover:bg-orange-200 mx-2 px-4 py-1 rounded-lg"
-          onClick={() => {
-            const data = filterRes(searchText, listRestaurents);
-            setNewListRestaurents(data);
-          }}
-        >
-          Search
-        </button>
+        <div className="flex justify-between">
+          <div>
+            <input
+              type="text"
+              className="search-bar-input border border-solid border-black mx-2 px-2 py-1 rounded-lg"
+              placeholder="Search Restaurant"
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+            />
+            <button
+              className="bg-orange-100 border border-solid border-orange-200 shadow-md hover:bg-orange-200 mx-2 px-4 py-1 rounded-lg"
+              onClick={() => {
+                const data = filterRes(searchText, listRestaurents);
+                setNewListRestaurents(data);
+              }}
+            >
+              Search
+            </button>
+          </div>
+
+          {/* useContext input */}
+          <div>
+            <label className="font-bold text-lg">User :</label>
+            <input
+              type="text"
+              className="border border-blue-300 border-solid ml-4"
+              value={loggedInUser}
+              onChange={(e) => {
+                setUserName(e.target.value);
+              }}
+            />
+          </div>
+        </div>
+
         <div className="filter">
           <button
             className="bg-orange-100 border border-solid border-orange-200 shadow-md hover:bg-orange-200 mx-2 my-5 px-4 py-1 rounded-lg"
@@ -184,7 +212,11 @@ const Body = () => {
                 key={restaurant.info.id}
                 to={'/restaurants/' + restaurant.info.id}
               >
-                <RestaurantCard resData={restaurant} />
+                {restaurant.info.avgRating > 4.2 ? (
+                  <RestaurentCardPromoted resData={restaurant} />
+                ) : (
+                  <RestaurantCard resData={restaurant} />
+                )}
               </Link>
             ))}
           </div>

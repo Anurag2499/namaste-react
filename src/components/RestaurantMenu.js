@@ -10,6 +10,9 @@ const RestaurantMenu = () => {
   const { resId } = useParams();
 
   const resInfo = useRestaurantMenu(resId);
+  console.log(resInfo);
+
+  const [showIndex, setShowIndex] = useState(null);
 
   if (resInfo === null) {
     return <ShimmerMenu />;
@@ -26,11 +29,15 @@ const RestaurantMenu = () => {
     feeDetails,
   } = resInfo?.cards[0]?.card?.card?.info;
 
-  const itemGroups =
-    resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR.cards;
+  // const itemGroup = itemGroups.slice(1);
+  const itemGroup =
+    resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards.filter(
+      (c) =>
+        c?.card?.card?.['@type'] ===
+        'type.googleapis.com/swiggy.presentation.food.v2.ItemCategory'
+    );
 
-  const itemGroup = itemGroups.slice(1);
-
+  console.log('add');
   console.log(itemGroup);
   console.log('add');
 
@@ -78,11 +85,25 @@ const RestaurantMenu = () => {
           </p>
         </div>
         <div className="bg-yellow-800  h-[1px] m-2 shadow-2xl"> </div>
+
+        {/*Creating a Accordian  */}
         <h2 className="text-2xl font-bold my-2 ml-10 mt-6 ">Menu:</h2>
         <div className="rounded-lg">
           {itemGroup.map(
             (group, index) => (
-              (key = group.card.card.title), (<Accordion group={group} />)
+              (key = group.card.card.title),
+              (
+                <Accordion
+                  key={group.card.card.title}
+                  isOpen={index === showIndex ? true : false}
+                  setShowIndex={() => {
+                    showIndex == index
+                      ? setShowIndex(null)
+                      : setShowIndex(index);
+                  }}
+                  group={group}
+                />
+              )
             )
           )}
 
