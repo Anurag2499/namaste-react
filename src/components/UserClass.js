@@ -15,8 +15,6 @@ class UserClass extends React.Component {
   async componentDidMount() {
     const data = await fetch('https://api.github.com/users/Anurag2499');
     const json = await data.json();
-    console.log(json);
-    console.log('did mount called');
 
     // this.timer = setInterval(() => {
     //   console.log('timer is running.');
@@ -25,12 +23,9 @@ class UserClass extends React.Component {
     this.setState({ userInfo: json }); //here iam updating the state.
   }
 
-  componentDidUpdate() {
-    console.log('Did update Called.');
-  }
+  componentDidUpdate() {}
   componentWillUnmount() {
     // clearInterval(this.timer);
-    console.log('did unmount called');
   }
 
   render() {

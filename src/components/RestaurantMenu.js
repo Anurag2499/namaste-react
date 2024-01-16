@@ -10,7 +10,6 @@ const RestaurantMenu = () => {
   const { resId } = useParams();
 
   const resInfo = useRestaurantMenu(resId);
-  console.log(resInfo);
 
   const [showIndex, setShowIndex] = useState(null);
 
@@ -36,10 +35,6 @@ const RestaurantMenu = () => {
         c?.card?.card?.['@type'] ===
         'type.googleapis.com/swiggy.presentation.food.v2.ItemCategory'
     );
-
-  console.log('add');
-  console.log(itemGroup);
-  console.log('add');
 
   const { itemCards } =
     resInfo?.cards[2]?.groupedCard?.cardGroupMap?.REGULAR?.cards[2].card.card;
@@ -89,23 +84,16 @@ const RestaurantMenu = () => {
         {/*Creating a Accordian  */}
         <h2 className="text-2xl font-bold my-2 ml-10 mt-6 ">Menu:</h2>
         <div className="rounded-lg">
-          {itemGroup.map(
-            (group, index) => (
-              (key = group.card.card.title),
-              (
-                <Accordion
-                  key={group.card.card.title}
-                  isOpen={index === showIndex ? true : false}
-                  setShowIndex={() => {
-                    showIndex == index
-                      ? setShowIndex(null)
-                      : setShowIndex(index);
-                  }}
-                  group={group}
-                />
-              )
-            )
-          )}
+          {itemGroup.map((group, index) => (
+            <Accordion
+              key={group.card.card.title}
+              isOpen={index === showIndex ? true : false}
+              setShowIndex={() => {
+                showIndex == index ? setShowIndex(null) : setShowIndex(index);
+              }}
+              group={group}
+            />
+          ))}
 
           {/* <Accordion itemGroup={itemGroup} /> */}
         </div>

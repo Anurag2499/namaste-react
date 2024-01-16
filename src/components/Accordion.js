@@ -1,9 +1,19 @@
 import { useState } from 'react';
+import React from 'react';
 import { CDN_URL } from '../utils/constants';
+import { useDispatch } from 'react-redux';
+import { addItem } from '../utils/cartSlice';
 
 const Accordion = ({ group, isOpen, setShowIndex }) => {
   // const [isOpen, setIsOpen] = useState(false);   Initially i was managing the state here in this component
-  console.log({ group });
+
+  const dispatch = useDispatch();
+
+  const handleAddItem = (item) => {
+    console.log(item);
+    dispatch(addItem(item));
+  };
+
   return (
     <div>
       <div className="w-[90%] mt-8 mx-auto rounded-lg">
@@ -39,44 +49,45 @@ const Accordion = ({ group, isOpen, setShowIndex }) => {
                 }`}
               >
                 {' '}
-                {console.log(group?.card?.card?.itemCards)}
                 <div className="p-5 border border-b-0 border-gray-200 dark:border-gray-200 rounded-b-lg ">
                   {group?.card?.card?.itemCards &&
                   Array.isArray(group?.card?.card?.itemCards)
-                    ? group?.card?.card?.itemCards.map(
-                        (item) => (
-                          (key = item.card.info.id),
-                          (
-                            <div className="flex justify-between  border-gray-300 p-2 m-2   border-b-2">
-                              <div className="w-[450px]">
-                                <div className="py-2">
-                                  <span> {item?.card?.info?.name} </span>
-                                  <span>
-                                    ₹
-                                    {item?.card?.info?.defaultPrice
-                                      ? item?.card?.info?.defaultPrice / 100
-                                      : item?.card?.info?.price / 100}
-                                  </span>
-                                </div>
-                                <p className="text-xs mr-12 ">
-                                  {item?.card?.info?.description}
-                                </p>
-                              </div>
-                              <div className="">
-                                <div className="flex justify-around">
-                                  <label className="absolute  flex items-center justify-center  bg-black m-2 p-2 rounded-lg text-white text-sm   w-14 h-8">
-                                    Add +
-                                  </label>
-                                </div>
-                                <img
-                                  src={CDN_URL + item?.card?.info?.imageId}
-                                  className="w-28 h-28 p-2 mb-4 rounded-lg shadow-lg  border border-gray-300 border-lg "
-                                />
-                              </div>
+                    ? group?.card?.card?.itemCards.map((item) => (
+                        // (key = item.card.info.id),
+                        <div
+                          key={item.card.info.id}
+                          className="flex justify-between  border-gray-300 p-2 m-2   border-b-2"
+                        >
+                          <div className="w-[450px]">
+                            <div className="py-2">
+                              <span> {item?.card?.info?.name} </span>
+                              <span>
+                                ₹
+                                {item?.card?.info?.defaultPrice
+                                  ? item?.card?.info?.defaultPrice / 100
+                                  : item?.card?.info?.price / 100}
+                              </span>
                             </div>
-                          )
-                        )
-                      )
+                            <p className="text-xs mr-12 ">
+                              {item?.card?.info?.description}
+                            </p>
+                          </div>
+                          <div className="">
+                            <div className="flex justify-around">
+                              <label
+                                onClick={() => handleAddItem(item)}
+                                className="absolute  flex items-center justify-center  bg-black m-2 p-2 rounded-lg text-white text-sm   w-14 h-8"
+                              >
+                                Add +
+                              </label>
+                            </div>
+                            <img
+                              src={CDN_URL + item?.card?.info?.imageId}
+                              className="w-28 h-28 p-2 mb-4 rounded-lg shadow-lg  border border-gray-300 border-lg "
+                            />
+                          </div>
+                        </div>
+                      ))
                     : null}
                 </div>
               </div>
